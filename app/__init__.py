@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.core.lifespan import lifespan
 from app.core.server import Server
+from .models import *
 
 
 def create_app(_=None) -> FastAPI:
