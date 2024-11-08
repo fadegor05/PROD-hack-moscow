@@ -11,7 +11,7 @@ class BaseModel(SQLModel):
 
 
 class BaseUUIDModel(BaseModel):
-    id: UUID = Field(
+    uuid: UUID = Field(
         default_factory=uuid4,
         primary_key=True,
         index=True,
