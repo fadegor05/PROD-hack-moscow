@@ -7,7 +7,7 @@ from sqlmodel import SQLModel, Field
 class BaseModel(SQLModel):
     @declared_attr
     def __tablename__(cls) -> str:
-        return cls.__name__
+        return cls.__name__.lower()
 
 
 class BaseUUIDModel(BaseModel):
