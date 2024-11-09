@@ -1,30 +1,7 @@
 # Определяем стадии сборки и деплоя
 stages:
-  - build
   - deploy
 
-# Определяем переменные для упрощения конфигурации
-variables:
-  IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # Название и тег Docker-образа
-  DOCKER_HOST: tcp://localhost:2375
-  DOCKER_TLS_VERIFY: "1"  # Включение проверки сертификатов
-  DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR"
-
-# Сборка Docker-образа и пуш в GitLab Container Registry
-build:
-  stage: build
-  image: docker:20.10.16
-  services:
-    - docker:dind
-  script:
-    - echo "Логинимся в GitLab Registry"
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - echo "Собираем Docker-образ"
-    - docker build -t "$IMAGE_NAME" .
-    - echo "Пушим образ в GitLab Registry"
-    - docker push "$IMAGE_NAME"
-  only:
-    - master  # Срабатывает только на главной ветке; можно заменить на нужную ветку
 
 # Деплой Docker-образа на удаленный VPS через SSH
 deploy:
