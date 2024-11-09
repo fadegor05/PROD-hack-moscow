@@ -10,6 +10,7 @@ from app.models.base_model import BaseModel, BaseUUIDModel
 if TYPE_CHECKING:
     from .bill_model import Bill
     from .user_model import User
+    from .invite_model import Invite
 
 
 class EventBase(BaseModel):
@@ -23,3 +24,4 @@ class EventBase(BaseModel):
 class Event(BaseUUIDModel, EventBase, table=True):
     bills: List["Bill"] = Relationship(back_populates="event", sa_relationship_kwargs={"lazy": "selectin"})
     owner: "User" = Relationship(back_populates="events", sa_relationship_kwargs={"lazy": "selectin"})
+    invites: List["Invite"] = Relationship(back_populates="event", sa_relationship_kwargs={"lazy": "selectin"})
