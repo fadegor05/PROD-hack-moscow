@@ -7,6 +7,7 @@ from .health_check.health_check import health_check_router
 from .items.items import items_router
 from .receipts.receipts import receipts_router
 from .users.users import users_router
+from .invites.invites import invites_router
 
 subrouters = (
     health_check_router,
@@ -16,6 +17,7 @@ subrouters = (
     events_router,
     bills_router,
     items_router,
+    invites_router,
 )
 
 v1_router = APIRouter(prefix="/v1")

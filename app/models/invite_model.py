@@ -26,5 +26,9 @@ class InviteBase(BaseModel):
 
 
 class Invite(BaseUUIDModel, InviteBase, table=True):
-    event: "Event" = Relationship(back_populates="invites", sa_relationship_kwargs={"lazy": "selectin"})
-    invited: "User" = Relationship(back_populates="invites", sa_relationship_kwargs={"lazy": "selectin"})
+    event: "Event" = Relationship(
+        back_populates="invites", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    invited: "User" = Relationship(
+        back_populates="invites", sa_relationship_kwargs={"lazy": "selectin"}
+    )
