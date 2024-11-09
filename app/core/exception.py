@@ -13,6 +13,8 @@ class MultiLangHTTPException(HTTPException):
 class MultiLangHTTPExceptions(Enum):
     USER_ALREADY_EXISTS = (409, "User already exists", "Пользователь уже существует")
     USER_NOT_FOUND = (404, "User not found", "Пользователь не найден")
+    EVENT_NOT_FOUND = (404, "Event not found", "Событие не найдено")
+    EVENT_ALREADY_EXISTS = (409, "Event already exists", "Событие уже существует")
     INVALID_CREDENTIALS = (401, "Invalid credentials", "Неверные учетные данные")
 
     def to_exception(self):

@@ -22,4 +22,4 @@ class BillBase(BaseModel):
 class Bill(BaseUUIDModel, BillBase, table=True):
     event: "Event" = Relationship(back_populates="bills", sa_relationship_kwargs={"lazy": "selectin"})
     paid_by: "User" = Relationship(back_populates="paid", sa_relationship_kwargs={"lazy": "selectin"})
-    items: List["Item"] = Relationship(back_populates="bills", sa_relationship_kwargs={"lazy": "selectin"})
+    items: List["Item"] = Relationship(back_populates="bill", sa_relationship_kwargs={"lazy": "selectin"})
