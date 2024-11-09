@@ -9,6 +9,7 @@ variables:
   DOCKER_TLS_VERIFY: "1"  # Включение проверки сертификатов
   DOCKER_CERT_PATH: "/certs"  # Путь к сертификатам
   DOCKER_HOST: tcp://localhost:2376
+  DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
 
 # Сборка Docker-образа и пуш в GitLab Container Registry
 build:
