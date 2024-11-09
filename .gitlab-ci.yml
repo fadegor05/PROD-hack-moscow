@@ -13,10 +13,10 @@ deploy:
     - ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
   script:
     - ssh -v -o StrictHostKeyChecking=no "ubuntu@$SSH_HOST" << EOF
-        cd ~/backend
-        docker compose stop
-        git fetch
-        git pull
+        cd /home/ubuntu/backend &&
+        docker compose stop &&
+        git fetch &&
+        git pull &&
         docker compose up --build -d
       EOF
   only:
