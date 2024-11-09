@@ -1,5 +1,15 @@
 from pydantic import computed_field
 from pydantic_settings import BaseSettings
+from functools import lru_cache
+
+
+class JWTSettings(BaseSettings):
+    jwt_secret: str
+    jwt_algorithm: str = "HS256"
+    jwt_expires_minutes: int = 60 * 24  # 1 day
+
+    class Config:
+        extra = "allow"
 
 
 class PostgresSettings(BaseSettings):
@@ -22,3 +32,38 @@ class ParserSettings(BaseSettings):
 
     class Config:
         extra = "allow"
+
+
+class Settings(BaseSettings):
+    # Basic settings
+    ENV: str = "prod"
+    PROJECT_NAME: str = "FastAPI App"
+
+    # Backend settings
+    backend_port: str
+
+    # Database settings
+    postgres_port: str
+    postgres_user: str
+    postgres_password: str
+    postgres_db: str
+
+    # Parser settings
+    proverkacheka_token: str
+
+    # JWT settings
+    jwt_secret: str
+    jwt_algorithm: str
+    jwt_expires_minutes: int
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
+
+
+@lru_cache()
+def get_settings():
+    return Settings()
+
+
+settings = get_settings()

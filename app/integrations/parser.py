@@ -1,4 +1,3 @@
-import json
 from typing import Dict, Any
 import aiohttp
 from app.core.config import ParserSettings
