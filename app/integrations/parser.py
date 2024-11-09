@@ -1,7 +1,13 @@
 from typing import Dict, Any
+
 import aiohttp
+
 from app.core.config import ParserSettings
-from app.integrations.gemini import gemini_client
+
+try:
+    from app.integrations.gemini import gemini_client
+except ImportError:
+    gemini_client = None
 
 settings = ParserSettings()
 
