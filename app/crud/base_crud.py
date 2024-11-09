@@ -43,7 +43,7 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def update(self, *, obj_current: ModelType,
                      obj_new: UpdateSchemaType | dict[str, Any] | ModelType,
-                     db_session: AsyncSession) -> ModelType:
+                     session: AsyncSession) -> ModelType:
         if isinstance(obj_new, dict):
             update_data = obj_new
         else:
@@ -53,15 +53,15 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         for field in update_data:
             setattr(obj_current, field, update_data[field])
 
-        db_session.add(obj_current)
-        await db_session.commit()
-        await db_session.refresh(obj_current)
+        session.add(obj_current)
+        await session.commit()
+        await session.refresh(obj_current)
         return obj_current
 
-    async def remove(self, *, uuid: UUID | str, session: AsyncSession) -> ModelType:
+    async def remove(self, *, uuid: UUID | str, session: AsyncSession) -> ModelType | None:
         query = select(self.model).where(self.model.uuid == uuid)
         response = await session.execute(query)
-        obj = response.scalar_one()
+        obj = response.scalar_one_or_none()
         await session.delete(obj)
         await session.commit()
         return obj

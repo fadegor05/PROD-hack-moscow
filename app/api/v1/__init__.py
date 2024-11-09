@@ -2,9 +2,11 @@ from fastapi import APIRouter
 
 from .health_check.health_check import health_check_router
 from .receipt.receipt import receipt_router
+from .users.users import users_router
 
 subrouters = (
     health_check_router,
+    users_router,
     receipt_router,
 )
 
