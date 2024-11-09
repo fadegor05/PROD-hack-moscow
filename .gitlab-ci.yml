@@ -16,12 +16,11 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa  # Устанавливаем права доступа к приватному ключу
     - ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts  # Добавляем хост в список известных
     - echo "Деплой на VPS"
-    - ssh $SSH_USER@$SSH_HOST << "EOF"
+    - ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" << "EOF"
         cd ~/backend
         docker compose stop
         git fetch
         git pull
-        echo "Запуск"
         docker compose up --build -d
       EOF
   only:
