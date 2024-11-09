@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .bill_model import Bill
     from .event_model import Event
     from .item_model import Item
+    from .invite_model import Invite
 
 
 class UserBase(BaseModel):
@@ -32,3 +33,4 @@ class User(BaseUUIDModel, UserBase, table=True):
     paid: List["Bill"] = Relationship(back_populates="paid_by", sa_relationship_kwargs={"lazy": "selectin"})
     events: List["Event"] = Relationship(back_populates="owner", sa_relationship_kwargs={"lazy": "selectin"})
     items: List["Item"] = Relationship(back_populates="assigned_user", sa_relationship_kwargs={"lazy": "selectin"})
+    invites: List["Invite"] = Relationship(back_populates="invited", sa_relationship_kwargs={"lazy": "selectin"})
