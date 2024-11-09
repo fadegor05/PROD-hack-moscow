@@ -15,3 +15,10 @@ class PostgresSettings(BaseSettings):
 
     class Config:
         extra = "allow"
+
+
+class ParserSettings(BaseSettings):
+    proverkacheka_token: str
+
+    class Config:
+        extra = "allow"
