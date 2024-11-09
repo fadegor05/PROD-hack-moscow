@@ -13,6 +13,7 @@ deploy:
   script:
     - scp -r -o StrictHostKeyChecking=no . ${SSH_USER}@${SSH_HOST}:/backend
     - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
+        mkdir -p /backend
         cd /backend &&
         docker-compose down &&
         docker-compose up -d
