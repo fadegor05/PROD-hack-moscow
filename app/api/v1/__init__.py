@@ -1,9 +1,11 @@
 from fastapi import APIRouter
 
 from .health_check.health_check import health_check_router
+from .users.users import users_router
 
 subrouters = (
     health_check_router,
+    users_router
 )
 
 v1_router = APIRouter()
