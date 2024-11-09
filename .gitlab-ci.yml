@@ -6,13 +6,14 @@ stages:
 # Определяем переменные для упрощения конфигурации
 variables:
   IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # Название и тег Docker-образа
+  DOCKER_HOST: tcp://docker:2375
 
 # Сборка Docker-образа и пуш в GitLab Container Registry
 build:
   stage: build
   image: docker:20.10.16
   services:
-    - docker:20.10.16-dind
+    - docker:dind
   script:
     - echo "Логинимся в GitLab Registry"
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
