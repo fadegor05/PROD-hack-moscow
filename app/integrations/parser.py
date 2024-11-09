@@ -1,6 +1,7 @@
 from typing import Dict, Any
 import aiohttp
 from app.core.config import ParserSettings
+from app.integrations.gemini import gemini_client
 
 settings = ParserSettings()
 
@@ -9,6 +10,7 @@ class ReceiptParser:
     def __init__(self, token: str):
         self.token = token
         self.api_url = "https://proverkacheka.com/api/v1/check/get"
+        self.gemini = gemini_client
 
     async def parse_receipt(self, qr_raw: str) -> Dict[str, Any]:
         """Parse receipt data from QR code string"""
@@ -17,7 +19,13 @@ class ReceiptParser:
         async with aiohttp.ClientSession() as session:
             async with session.post(self.api_url, data=data) as response:
                 receipt_data = await response.json()
-                return self._extract_receipt_info(receipt_data)
+                receipt_info = self._extract_receipt_info(receipt_data)
+                try:
+                    category_json = self.gemini.get_category(receipt_info)
+                    receipt_info.update(category_json)
+                except:
+                    receipt_info["category"] = None
+                return receipt_info
 
     def _extract_receipt_info(self, receipt_data: Dict[str, Any]) -> Dict[str, Any]:
         """Extract relevant information from receipt data"""

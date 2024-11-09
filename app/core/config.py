@@ -10,6 +10,7 @@ class JWTSettings(BaseSettings):
 
     class Config:
         extra = "allow"
+        env_file = ".env"
 
 
 class PostgresSettings(BaseSettings):
@@ -25,6 +26,7 @@ class PostgresSettings(BaseSettings):
 
     class Config:
         extra = "allow"
+        env_file = ".env"
 
 
 class ParserSettings(BaseSettings):
@@ -32,6 +34,15 @@ class ParserSettings(BaseSettings):
 
     class Config:
         extra = "allow"
+        env_file = ".env"
+
+
+class GeminiSettings(BaseSettings):
+    gemini_api_key: str | None = None  # Make this field optional
+
+    class Config:
+        extra = "allow"
+        env_file = ".env"
 
 
 class Settings(BaseSettings):
@@ -50,6 +61,9 @@ class Settings(BaseSettings):
 
     # Parser settings
     proverkacheka_token: str
+
+    # Gemini settings
+    gemini_api_key: str | None = None  # Make this field optional
 
     # JWT settings
     jwt_secret: str

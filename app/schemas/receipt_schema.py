@@ -13,6 +13,7 @@ class IReceiptRead(BaseModel):
     store: str
     items: List[IReceiptItem]
     total: float
+    category: str | None
 
 
 class IQRCodePost(BaseModel):
