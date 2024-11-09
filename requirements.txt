@@ -17,3 +17,5 @@ starlette==0.41.2
 typing_extensions==4.12.2
 uvicorn==0.32.0
 aiohttp>=3.10.10
+python-jose==3.3.0
+python-multipart==0.0.17
