@@ -7,7 +7,6 @@ stages:
 variables:
   IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # Название и тег Docker-образа
   DOCKER_TLS_VERIFY: "1"  # Включение проверки сертификатов
-  DOCKER_CERT_PATH: "/certs"  # Путь к сертификатам
   DOCKER_HOST: tcp://localhost:2376
   DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
 
