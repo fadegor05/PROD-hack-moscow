@@ -1,18 +1,19 @@
 from typing import List
+
 from pydantic import BaseModel
 
 
-class ReceiptItem(BaseModel):
+class IReceiptItem(BaseModel):
     name: str
     price: float
     quantity: float
 
 
-class ReceiptInfo(BaseModel):
+class IReceiptRead(BaseModel):
     store: str
-    items: List[ReceiptItem]
+    items: List[IReceiptItem]
     total: float
 
 
-class QRCodeInput(BaseModel):
-    qr_raw: str 
+class IQRCodePost(BaseModel):
+    qr_raw: str
