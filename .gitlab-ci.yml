@@ -12,7 +12,7 @@ deploy:
   
   script:
     # Создаём директорию /backend на сервере, если она ещё не создана
-    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "sudo mkdir -p /backend"
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "sudo mkdir -p /backend && sudo chown ${SSH_USER}:${SSH_USER} /backend"
     # Копируем файлы в директорию /backend на сервере
     - scp -r -o StrictHostKeyChecking=no . ${SSH_USER}@${SSH_HOST}:/backend
     # Заходим на сервер и выполняем команды деплоя
