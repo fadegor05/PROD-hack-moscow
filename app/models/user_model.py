@@ -1,10 +1,14 @@
 import re
+from typing import TYPE_CHECKING, List
 
 from pydantic import FileUrl, field_validator
 from sqlalchemy import Column
-from sqlmodel import Field, String
+from sqlmodel import Field, String, Relationship
 
 from app.models.base_model import BaseModel, BaseUUIDModel
+
+if TYPE_CHECKING:
+    from .bill_model import Bill
 
 
 class UserBase(BaseModel):
@@ -22,3 +26,5 @@ class UserBase(BaseModel):
 
 class User(BaseUUIDModel, UserBase, table=True):
     hashed_password: str | None = Field(default=None, nullable=False)
+    paid: List["Bill"] = Relationship(back_populates="paid_by", sa_relationship_kwargs={"lazy": "selectin"})
+    # items: List["Item"] = Relationship(back_populates="assigned_user", sa_relationship_kwargs={"lazy": "selectin"})
