@@ -3,21 +3,19 @@ stages:
 
 deploy:
   stage: deploy
-  image: ubuntu:latest
+  image: alpine:latest
   before_script:
-    - apt update && apt install -y openssh-client
-    - echo "Настройка SSH для подключения"
+    - apk add --no-cache openssh
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+  
   script:
-    - ssh -v -o StrictHostKeyChecking=no "ubuntu@$SSH_HOST" << EOF
-        cd /home/ubuntu/backend &&
-        docker compose stop &&
-        git fetch &&
-        git pull &&
-        docker compose up --build -d
-      EOF
+    - scp -r -o StrictHostKeyChecking=no . ${SSH_USER}@${SSH_HOST}:/backend
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
+        cd /backend &&
+        docker-compose down &&
+        docker-compose up -d
+      "
   only:
     - master
