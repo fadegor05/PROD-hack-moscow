@@ -18,8 +18,8 @@ deploy:
     # Выполняем команды деплоя в одном вызове sudo
     - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
         cd /backend &&
-        sudo docker-compose down &&
-        sudo docker-compose up --build -d
+        sudo docker compose down &&
+        sudo docker compose up --build -d
       "
   only:
     - master
