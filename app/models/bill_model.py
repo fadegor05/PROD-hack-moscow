@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class BillBase(BaseModel):
-    name: str = Field(sa_column=Column(String(1000), index=True, unique=True, nullable=False))
+    name: str = Field(sa_column=Column(String(1000), nullable=False))
     event_uuid: UUID | None = Field(default=None, foreign_key="event.uuid")
     paid_by_uuid: UUID | None = Field(default=None, foreign_key="user.uuid")
 

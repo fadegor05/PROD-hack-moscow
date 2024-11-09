@@ -15,6 +15,10 @@ class MultiLangHTTPExceptions(Enum):
     USER_NOT_FOUND = (404, "User not found", "Пользователь не найден")
     EVENT_NOT_FOUND = (404, "Event not found", "Событие не найдено")
     EVENT_ALREADY_EXISTS = (409, "Event already exists", "Событие уже существует")
+    BILL_NOT_FOUND = (404, "Bill not found", "Счет не найдено")
+    BILL_ALREADY_EXISTS = (409, "Bill already exists", "Счет уже существует")
+    ITEM_NOT_FOUND = (404, "Item not found", "Позиция не найдена")
+    ITEM_ALREADY_EXISTS = (409, "Item already exists", "Позиция уже существует")
     INVALID_CREDENTIALS = (401, "Invalid credentials", "Неверные учетные данные")
 
     def to_exception(self):
