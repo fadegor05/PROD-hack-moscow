@@ -20,6 +20,8 @@ class MultiLangHTTPExceptions(Enum):
     ITEM_NOT_FOUND = (404, "Item not found", "Позиция не найдена")
     ITEM_ALREADY_EXISTS = (409, "Item already exists", "Позиция уже существует")
     INVALID_CREDENTIALS = (401, "Invalid credentials", "Неверные учетные данные")
+    INVITE_NOT_FOUND = (404, "Invite not found", "Приглашение не найдено")
+    INVALID_PERMISSIONS = (403, "Invalid permissions", "Недостаточно прав")
 
     def to_exception(self):
         return MultiLangHTTPException(*self.value)
