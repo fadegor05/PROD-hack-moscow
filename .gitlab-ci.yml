@@ -11,9 +11,12 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
   
   script:
+    # Создаём директорию /backend на сервере, если она ещё не создана
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "mkdir -p /backend"
+    # Копируем файлы в директорию /backend на сервере
     - scp -r -o StrictHostKeyChecking=no . ${SSH_USER}@${SSH_HOST}:/backend
+    # Заходим на сервер и выполняем команды деплоя
     - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
-        mkdir /backend
         cd /backend &&
         docker-compose down &&
         docker-compose up --build -d
