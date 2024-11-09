@@ -1,17 +1,39 @@
-from datetime import datetime
+from enum import Enum
 from uuid import UUID
-from pydantic import BaseModel, Field
-
-from app.schemas.common_schema import IInviteStatusEnum
+from pydantic import BaseModel
 
 
-class IInviteRead(BaseModel):
+class InviteStatus(str, Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    DECLINED = "declined"
+
+
+class IInviteBase(BaseModel):
+    event_uuid: UUID
+    user_uuid: UUID
+    status: InviteStatus
+
+
+class IInviteCreate(IInviteBase):
+    pass
+
+
+class IInviteUpdate(BaseModel):
+    status: InviteStatus
+
+
+class IInviteRead(IInviteBase):
     uuid: UUID
-    owner_avatar: str | None
-    owner_full_name: str
-    event_name: str
-    event_until: datetime
-    status: IInviteStatusEnum
 
     class Config:
         from_attributes = True
+
+
+class IInviteRequest(BaseModel):
+    invite_uuid: UUID
+
+
+class ICreateInviteRequest(BaseModel):
+    event_uuid: UUID
+    user_uuid: UUID

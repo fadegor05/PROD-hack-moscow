@@ -1,4 +1,5 @@
 from typing import Annotated, Union, List
+from urllib.parse import unquote
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -11,6 +12,25 @@ from app.schemas.common_schema import IOrderEnum
 from app.schemas.user_schema import IUserCreate, IUserRead, IUserUpdate
 
 users_router = APIRouter(prefix="/users", tags=["User"])
+
+
+@users_router.get(
+    "/{user_phone}",
+    summary="Получить пользователя по номеру телефона",
+    description="Возвращает информацию о пользователе по его номеру телефона",
+    responses={
+        404: {
+            "description": "Пользователь не найден"
+        }
+    }
+)
+async def get_user_by_phone(user_phone: Annotated[str, Query],
+                            session: AsyncSession = Depends(get_async_session)) -> IUserRead:
+    decoded_phone = unquote(user_phone)
+    user = await crud.user.get_by_phone(phone=decoded_phone, session=session)
+    if user is None:
+        raise MultiLangHTTPExceptions.USER_NOT_FOUND.to_exception()
+    return user
 
 
 @users_router.get(
@@ -40,23 +60,6 @@ async def get_user_by_uuid(user_uuid: UUID, session: AsyncSession = Depends(get_
     return user
 
 
-@users_router.get(
-    "/{user_phone}",
-    summary="Получить пользователя по номеру телефона",
-    description="Возвращает информацию о пользователе по его номеру телефона",
-    responses={
-        404: {
-            "description": "Пользователь не найден"
-        }
-    }
-)
-async def get_user_by_phone(user_phone: str, session: AsyncSession = Depends(get_async_session)) -> IUserRead:
-    user = await crud.user.get_by_phone(phone=user_phone, session=session)
-    if user is None:
-        raise MultiLangHTTPExceptions.USER_NOT_FOUND.to_exception()
-    return user
-
-
 @users_router.get("")
 async def get_multi_users(skip: Annotated[Union[int, None], Query] = 0, limit: Annotated[Union[int, None], Query] = 100,
                           order_by: Annotated[Union[str, None], Query] = "uuid",
@@ -68,8 +71,8 @@ async def get_multi_users(skip: Annotated[Union[int, None], Query] = 0, limit: A
 
 @users_router.post(
     "",
-    summary="Создать нового пользователя",
-    description="Создает новую учетную запись пользователя",
+    summary="Создать нового незарегистрированного пользователя",
+    description="Создает новую незарегестрированную учетную запись пользователя",
     responses={
         409: {
             "description": "Пользователь уже существует"
@@ -101,20 +104,3 @@ async def patch_user_by_uuid(user_uuid: UUID, user_data: IUserUpdate,
         raise MultiLangHTTPExceptions.USER_NOT_FOUND.to_exception()
     updated_user = await crud.user.update(obj_current=user, obj_new=user_data, session=session)
     return updated_user
-
-
-@users_router.delete(
-    "/{user_uuid}",
-    summary="Удалить пользователя",
-    description="Удаляет существующего пользователя",
-    responses={
-        404: {
-            "description": "Пользователь не найден"
-        }
-    }
-)
-async def delete_user_by_uuid(user_uuid: UUID, session: AsyncSession = Depends(get_async_session)) -> IUserRead:
-    user = await crud.user.remove(uuid=user_uuid, session=session)
-    if user is None:
-        raise MultiLangHTTPExceptions.USER_NOT_FOUND.to_exception()
-    return user
