@@ -15,7 +15,6 @@ users_router = APIRouter(prefix="/users", tags=["User"])
 
 @users_router.get(
     "/{user_uuid}",
-    response_model=IUserRead,
     summary="Получить пользователя по UUID",
     description="Возвращает информацию о пользователе по его UUID",
     responses={
@@ -43,7 +42,6 @@ async def get_user_by_uuid(user_uuid: UUID, session: AsyncSession = Depends(get_
 
 @users_router.get(
     "/{user_phone}",
-    response_model=IUserRead,
     summary="Получить пользователя по номеру телефона",
     description="Возвращает информацию о пользователе по его номеру телефона",
     responses={
@@ -70,7 +68,6 @@ async def get_multi_users(skip: Annotated[Union[int, None], Query] = 0, limit: A
 
 @users_router.post(
     "",
-    response_model=IUserRead,
     summary="Создать нового пользователя",
     description="Создает новую учетную запись пользователя",
     responses={
@@ -89,7 +86,6 @@ async def post_user(user_data: IUserCreate, session: AsyncSession = Depends(get_
 
 @users_router.patch(
     "/{user_uuid}",
-    response_model=IUserRead,
     summary="Обновить данные пользователя",
     description="Обновляет информацию о существующем пользователе",
     responses={
@@ -109,7 +105,6 @@ async def patch_user_by_uuid(user_uuid: UUID, user_data: IUserUpdate,
 
 @users_router.delete(
     "/{user_uuid}",
-    response_model=IUserRead,
     summary="Удалить пользователя",
     description="Удаляет существующего пользователя",
     responses={

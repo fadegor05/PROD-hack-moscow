@@ -2,21 +2,20 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
+from app.core.config import settings
+from app.core.decorators import dev_only
 from app.core.exception import MultiLangHTTPExceptions
 from app.core.jwt import create_access_token, get_current_user
 from app.core.security import get_plain_hash
 from app.database.database import get_async_session
 from app.schemas.auth_schema import ILogin, IToken
-from app.schemas.user_schema import IUserCreate
-from app.core.decorators import dev_only
-from app.core.config import settings
+from app.schemas.user_schema import IUserRegister
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @auth_router.post(
     "/register",
-    response_model=IToken,
     status_code=201,
     responses={
         201: {
@@ -48,8 +47,8 @@ auth_router = APIRouter(prefix="/auth", tags=["Auth"])
     description="Создает новую учетную запись пользователя и возвращает JWT токен доступа",
 )
 async def register(
-    user_data: IUserCreate, session: AsyncSession = Depends(get_async_session)
-):
+        user_data: IUserRegister, session: AsyncSession = Depends(get_async_session)
+) -> IToken:
     """
     Register a new user account.
 
@@ -72,16 +71,14 @@ async def register(
         409: If user with provided phone number already exists
     """
     try:
-        user = await crud.user.create(obj_in=user_data, session=session)
+        user = await crud.user.register(obj_in=user_data, session=session)
     except:
         raise MultiLangHTTPExceptions.USER_ALREADY_EXISTS.to_exception()
-
-    return {"access_token": create_access_token(user.uuid), "token_type": "bearer"}
+    return IToken(access_token=create_access_token(user.uuid), token_type="bearer")
 
 
 @auth_router.post(
     "/login",
-    response_model=IToken,
     responses={
         200: {
             "description": "Успешная аутентификация",
@@ -111,7 +108,7 @@ async def register(
     summary="Вход пользователя",
     description="Аутентифицирует учетные данные пользователя и возвращает JWT токен доступа",
 )
-async def login(login_data: ILogin, session: AsyncSession = Depends(get_async_session)):
+async def login(login_data: ILogin, session: AsyncSession = Depends(get_async_session)) -> IToken:
     """
     Authenticate user and generate access token.
 
@@ -140,14 +137,14 @@ async def login(login_data: ILogin, session: AsyncSession = Depends(get_async_se
     if hashed_password != user.hashed_password:
         raise MultiLangHTTPExceptions.INVALID_CREDENTIALS.to_exception()
 
-    return {"access_token": create_access_token(user.uuid), "token_type": "bearer"}
+    return IToken(access_token=create_access_token(user.uuid), token_type="bearer")
 
 
 @auth_router.get(
     "/debug",
     summary="Отладочный эндпоинт (только для разработки)",
     description="Отладочный эндпоинт, доступный только в среде разработки. "
-    "Этот эндпоинт не будет виден в продакшене.",
+                "Этот эндпоинт не будет виден в продакшене.",
     include_in_schema=settings.ENV == "dev",
 )
 @dev_only()

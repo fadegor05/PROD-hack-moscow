@@ -9,6 +9,8 @@ from app.models.base_model import BaseModel, BaseUUIDModel
 
 if TYPE_CHECKING:
     from .bill_model import Bill
+    from .event_model import Event
+    from .item_model import Item
 
 
 class UserBase(BaseModel):
@@ -26,6 +28,7 @@ class UserBase(BaseModel):
 
 
 class User(BaseUUIDModel, UserBase, table=True):
-    hashed_password: str | None = Field(default=None, nullable=False)
+    hashed_password: str | None = Field(default=None, nullable=True)
     paid: List["Bill"] = Relationship(back_populates="paid_by", sa_relationship_kwargs={"lazy": "selectin"})
-    # items: List["Item"] = Relationship(back_populates="assigned_user", sa_relationship_kwargs={"lazy": "selectin"})
+    events: List["Event"] = Relationship(back_populates="owner", sa_relationship_kwargs={"lazy": "selectin"})
+    items: List["Item"] = Relationship(back_populates="assigned_user", sa_relationship_kwargs={"lazy": "selectin"})

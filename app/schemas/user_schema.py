@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
 from uuid import UUID
+
+from pydantic import BaseModel, Field
 
 
 class IUserBase(BaseModel):
@@ -19,6 +20,10 @@ class IUserBase(BaseModel):
 
 
 class IUserCreate(IUserBase):
+    pass
+
+
+class IUserRegister(IUserBase):
     """Schema for creating a new user"""
     password: str = Field(
         ...,
