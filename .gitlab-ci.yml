@@ -6,8 +6,8 @@ stages:
 # Определяем переменные для упрощения конфигурации
 variables:
   IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # Название и тег Docker-образа
-  DOCKER_TLS_VERIFY: "1"  # Включение проверки сертификатов
   DOCKER_HOST: tcp://localhost:2375
+  DOCKER_TLS_VERIFY: "1"  # Включение проверки сертификатов
   DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
 
 # Сборка Docker-образа и пуш в GitLab Container Registry
