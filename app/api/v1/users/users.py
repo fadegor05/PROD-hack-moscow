@@ -1,11 +1,13 @@
+from typing import Annotated, Union, List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
 from app.core.exception import MultiLangHTTPExceptions
 from app.database.database import get_async_session
+from app.schemas.common_schema import IOrderEnum
 from app.schemas.user_schema import IUserCreate, IUserRead, IUserUpdate
 
 users_router = APIRouter(prefix="/users", tags=["User"])
@@ -58,9 +60,12 @@ async def get_user_by_phone(user_phone: str, session: AsyncSession = Depends(get
 
 
 @users_router.get("")
-async def get_users():
-    # TODO
-    ...
+async def get_multi_users(skip: Annotated[Union[int, None], Query] = 0, limit: Annotated[Union[int, None], Query] = 100,
+                          order_by: Annotated[Union[str, None], Query] = "uuid",
+                          order: Annotated[Union[IOrderEnum, None], Query] = IOrderEnum.ascendent,
+                          session: AsyncSession = Depends(get_async_session)) -> List[IUserRead]:
+    users = await crud.user.get_multi_ordered(skip=skip, limit=limit, order_by=order_by, order=order, session=session)
+    return users
 
 
 @users_router.post(
