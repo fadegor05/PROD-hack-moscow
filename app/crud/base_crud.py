@@ -6,10 +6,13 @@ from pydantic import BaseModel
 from sqlmodel import SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.schemas.common_schema import IOrderEnum
+
 ModelType = TypeVar("ModelType", bound=SQLModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
+T = TypeVar("T", bound=SQLModel)
 
 
 class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
@@ -65,3 +68,29 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await session.delete(obj)
         await session.commit()
         return obj
+
+    async def get_multi_ordered(self, *, skip: int = 0,
+                                limit: int = 100, order_by: str, order: IOrderEnum = IOrderEnum.ascendent,
+                                session: AsyncSession) -> List[ModelType]:
+        columns = self.model.__table__.columns
+
+        if order_by is None or order_by not in columns:
+            order_by = "uuid"
+
+        if order == IOrderEnum.ascendent:
+            query = (
+                select(self.model)
+                .offset(skip)
+                .limit(limit)
+                .order_by(columns[order_by].asc())
+            )
+        else:
+            query = (
+                select(self.model)
+                .offset(skip)
+                .limit(limit)
+                .order_by(columns[order_by].desc())
+            )
+
+        response = await session.execute(query)
+        return response.scalars().all()
