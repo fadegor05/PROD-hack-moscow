@@ -8,7 +8,6 @@ receipts_router = APIRouter(prefix="/receipts", tags=["Receipt"])
 
 @receipts_router.post(
     "",
-    response_model=IReceiptRead,
     summary="Обработать QR-код чека",
     description="Принимает данные QR-кода чека и возвращает структурированную информацию о покупке"
 )
