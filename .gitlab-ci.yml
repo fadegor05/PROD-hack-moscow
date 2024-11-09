@@ -16,13 +16,14 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa  # Устанавливаем права доступа к приватному ключу
     - ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts  # Добавляем хост в список известных
     - echo "Деплой на VPS"
-    - cd ~/backend
-    - docker compose stop
-    - echo "Стягивание новой версии"
-    - git fetch
-    - git pull
-    - echo "Запуск"
-    - docker compose up --build -d
+    - ssh $SSH_USER@$SSH_HOST << "EOF"
+        cd ~/backend
+        docker compose stop
+        git fetch
+        git pull
+        echo "Запуск"
+        docker compose up --build -d
+      EOF
   only:
     - master  # Деплой тоже происходит только с главной ветки
 
