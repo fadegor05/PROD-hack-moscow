@@ -12,7 +12,7 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh -v -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" << "EOF"
+    - ssh -v -o StrictHostKeyChecking=no "ubuntu@$SSH_HOST" << "EOF"
         cd ~/backend &&
         docker compose stop &&
         git fetch &&
