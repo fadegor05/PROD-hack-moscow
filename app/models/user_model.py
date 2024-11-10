@@ -30,7 +30,15 @@ class UserBase(BaseModel):
 
 class User(BaseUUIDModel, UserBase, table=True):
     hashed_password: str | None = Field(default=None, nullable=True)
-    paid: List["Bill"] = Relationship(back_populates="paid_by", sa_relationship_kwargs={"lazy": "selectin"})
-    events: List["Event"] = Relationship(back_populates="owner", sa_relationship_kwargs={"lazy": "selectin"})
-    items: List["Item"] = Relationship(back_populates="assigned_user", sa_relationship_kwargs={"lazy": "selectin"})
-    invites: List["Invite"] = Relationship(back_populates="invited", sa_relationship_kwargs={"lazy": "selectin"})
+    paid: List["Bill"] = Relationship(
+        back_populates="paid_by", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    events: List["Event"] = Relationship(
+        back_populates="owner", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    items: List["Item"] = Relationship(
+        back_populates="assigned_user", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    invites: List["Invite"] = Relationship(
+        back_populates="invited", sa_relationship_kwargs={"lazy": "selectin"}
+    )

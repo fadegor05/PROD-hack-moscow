@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
+from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.models.event_model import EventBase
 from app.schemas.bill_schema import IBillResponse
@@ -12,22 +13,23 @@ class IEventCreate(EventBase):
     pass
 
 
-class IEventUpdate(EventBase):
-    pass
-
-
-class IEventRead(EventBase):
+class IEventRead(BaseModel):
     uuid: UUID
-    bills_uuid: List[UUID]
+    title: str
+    bills_uuid: Optional[List[UUID]] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class IEventResponse(BaseModel):
     uuid: UUID
-    name: str
-    description: str
+    title: str
     created_at: str
     until: str
-    total_price: float
-    collected_price: float
     owner: IUserRead
+    members: List[IUserRead]
     bills: List[IBillResponse]
+    total_debt: Decimal
+
+
+class IEventUpdate(EventBase):
+    pass

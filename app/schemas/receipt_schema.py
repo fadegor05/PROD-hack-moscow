@@ -1,18 +1,18 @@
 from typing import List
-
+from decimal import Decimal
 from pydantic import BaseModel
 
 
 class IReceiptItem(BaseModel):
     name: str
-    price: float
-    quantity: float
+    price: Decimal
+    quantity: Decimal
 
 
 class IReceiptRead(BaseModel):
     store: str
     items: List[IReceiptItem]
-    total: float
+    total: Decimal
     category: str | None
 
 
