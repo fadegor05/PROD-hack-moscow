@@ -22,14 +22,14 @@ class IEventCreate(EventBase):
 
 class IEventRead(BaseModel):
     uuid: UUID
-    title: str
+    name: str
     bills_uuid: Optional[List[UUID]] = None
     model_config = ConfigDict(from_attributes=True)
 
 
 class IEventResponse(BaseModel):
     uuid: UUID
-    title: str
+    name: str
     created_at: str
     until: str
     owner: IUserRead
