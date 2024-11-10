@@ -1,4 +1,4 @@
-from typing import Annotated, Union, List
+from typing import Annotated, Union
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -29,10 +29,11 @@ async def get_multi_bills(skip: Annotated[Union[int, None], Query] = 0,
                           limit: Annotated[Union[int, None], Query] = 20,
                           order_by: Annotated[Union[str, None], Query] = "uuid",
                           order: Annotated[Union[IOrderEnum, None], Query] = IOrderEnum.ascendent,
-                          session: AsyncSession = Depends(get_async_session)) -> List[IBillRead]:
-    bills = await crud.bill.get_multi_ordered_with_uuid_columns(skip=skip, limit=limit, order_by=order_by, order=order,
-                                                                session=session, columns=["items"],
-                                                                read_interface=IBillRead)
+                          session: AsyncSession = Depends(get_async_session)):
+    # TODO: AUTH AHH
+    bills = await BillService.get_bills_for_user_multi_ordered(skip=skip, limit=limit, order_by=order_by, order=order,
+                                                               session=session,
+                                                               user_uuid=UUID("e762ffca-ceb1-4d46-94a6-ebf6ec366422"))
     return bills
 
 
