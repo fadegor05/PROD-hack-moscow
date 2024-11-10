@@ -9,11 +9,15 @@ from app.schemas.bill_schema import IBillResponse
 from app.schemas.user_schema import IUserRead
 
 
-class IEventCreate(BaseModel):
+class IEventCreateBody(BaseModel):
     name: str
     description: str | None = None
     created_at: str | None = None
     until: str | None = None
+
+
+class IEventCreate(EventBase):
+    pass
 
 
 class IEventRead(BaseModel):

@@ -9,7 +9,7 @@ from app.core.deps import get_current_user
 from app.core.exception import MultiLangHTTPExceptions
 from app.database.database import get_async_session
 from app.schemas.common_schema import IOrderEnum
-from app.schemas.event_schema import IEventCreate, IEventResponse
+from app.schemas.event_schema import IEventResponse, IEventCreateBody, IEventCreate
 from app.services.event_service import EventService
 
 events_router = APIRouter(prefix="/events", tags=["Event"])
@@ -39,10 +39,12 @@ async def get_multi_events(skip: Annotated[Union[int, None], Query] = 0,
 
 
 @events_router.post("")
-async def post_event(user_data: IEventCreate, session: AsyncSession = Depends(get_async_session),
+async def post_event(user_data: IEventCreateBody, session: AsyncSession = Depends(get_async_session),
                      current_user=Depends(get_current_user)) -> IEventResponse:
+    data = user_data.model_dump()
+    data.update(owner_uuid=current_user.uuid)
     try:
-        event = await crud.event.create(obj_in=user_data, session=session)
+        event = await crud.event.create(obj_in=IEventCreate.model_validate(data), session=session)
     except HTTPException:
         raise MultiLangHTTPExceptions.EVENT_ALREADY_EXISTS.to_exception()
     event_new = await EventService.get_event(event_uuid=event.uuid, session=session, user_uuid=current_user.uuid)
