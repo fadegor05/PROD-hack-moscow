@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class UserBase(BaseModel):
     phone: str = Field(
-        sa_column=Column(String(25), index=True, unique=True, nullable=False)
+        sa_column=Column(String(25), unique=True, nullable=False)
     )
     full_name: str = Field(sa_column=Column(String(100), nullable=False))
 
