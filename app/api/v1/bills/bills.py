@@ -7,19 +7,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud
 from app.core.exception import MultiLangHTTPExceptions
 from app.database.database import get_async_session
-from app.schemas.bill_schema import IBillRead, IBillCreate
+from app.schemas.bill_schema import IBillRead, IBillCreate, IBillResponse
 from app.schemas.common_schema import IOrderEnum
+from app.services.bill_service import BillService
 
 bills_router = APIRouter(prefix="/bills", tags=["Bill"])
 
 
 @bills_router.get("/{bill_uuid}")
-async def get_bill_by_uuid(bill_uuid: UUID, session: AsyncSession = Depends(get_async_session)) -> IBillRead:
-    event = await crud.bill.get_with_uuid_columns(uuid=bill_uuid, session=session, columns=["items"],
-                                                  read_interface=IBillRead)
-    if event is None:
+async def get_bill_by_uuid(bill_uuid: UUID, session: AsyncSession = Depends(get_async_session)) -> IBillResponse:
+    # TODO: AUTH HERE AHH
+    bill = await BillService.get_bill(bill_uuid=bill_uuid, session=session,
+                                      user_uuid=UUID("e762ffca-ceb1-4d46-94a6-ebf6ec366422"))
+    if bill is None:
         raise MultiLangHTTPExceptions.BILL_NOT_FOUND.to_exception()
-    return event
+    return bill
 
 
 @bills_router.get("")
@@ -28,10 +30,10 @@ async def get_multi_bills(skip: Annotated[Union[int, None], Query] = 0,
                           order_by: Annotated[Union[str, None], Query] = "uuid",
                           order: Annotated[Union[IOrderEnum, None], Query] = IOrderEnum.ascendent,
                           session: AsyncSession = Depends(get_async_session)) -> List[IBillRead]:
-    events = await crud.bill.get_multi_ordered_with_uuid_columns(skip=skip, limit=limit, order_by=order_by, order=order,
-                                                                 session=session, columns=["items"],
-                                                                 read_interface=IBillRead)
-    return events
+    bills = await crud.bill.get_multi_ordered_with_uuid_columns(skip=skip, limit=limit, order_by=order_by, order=order,
+                                                                session=session, columns=["items"],
+                                                                read_interface=IBillRead)
+    return bills
 
 
 @bills_router.post("")

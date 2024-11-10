@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from pydantic import BaseModel
+
 from app.models.item_model import ItemBase
 
 
@@ -13,3 +15,7 @@ class IItemRead(ItemBase):
 
 class IItemUpdate(ItemBase):
     pass
+
+
+class IItemResponse(BaseModel):
+    uuid: UUID

@@ -16,6 +16,7 @@ class ItemBase(BaseModel):
     price: float = Field(default=0, nullable=False)
     assigned_user_uuid: UUID = Field(default=None, foreign_key="user.uuid")
     bill_uuid: UUID = Field(default=None, foreign_key="bill.uuid")
+    is_paid: bool = Field(default=False, nullable=False)
 
 
 class Item(BaseUUIDModel, ItemBase, table=True):
