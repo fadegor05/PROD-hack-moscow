@@ -8,15 +8,16 @@ from app import crud
 from app.core.exception import MultiLangHTTPExceptions
 from app.database.database import get_async_session
 from app.schemas.common_schema import IOrderEnum
-from app.schemas.event_schema import IEventRead, IEventCreate
+from app.schemas.event_schema import IEventRead, IEventCreate, IEventResponse
+from app.services.event_service import EventService
 
 events_router = APIRouter(prefix="/events", tags=["Event"])
 
 
 @events_router.get("/{event_uuid}")
-async def get_event_by_uuid(event_uuid: UUID, session: AsyncSession = Depends(get_async_session)) -> IEventRead:
-    event = await crud.event.get_with_uuid_columns(uuid=event_uuid, session=session, columns=["bills"],
-                                                   read_interface=IEventRead)
+async def get_event_by_uuid(event_uuid: UUID, session: AsyncSession = Depends(get_async_session)) -> IEventResponse:
+    event = await EventService.get_event(event_uuid=event_uuid, session=session,
+                                         user_uuid=UUID("e762ffca-ceb1-4d46-94a6-ebf6ec366422"))
     if event is None:
         raise MultiLangHTTPExceptions.EVENT_NOT_FOUND.to_exception()
     return event
@@ -27,10 +28,10 @@ async def get_multi_events(skip: Annotated[Union[int, None], Query] = 0,
                            limit: Annotated[Union[int, None], Query] = 20,
                            order_by: Annotated[Union[str, None], Query] = "uuid",
                            order: Annotated[Union[IOrderEnum, None], Query] = IOrderEnum.ascendent,
-                           session: AsyncSession = Depends(get_async_session)) -> List[IEventRead]:
-    events = await crud.user.get_multi_ordered_with_uuid_columns(skip=skip, limit=limit, order_by=order_by, order=order,
-                                                                 session=session, columns=["bills"],
-                                                                 read_interface=IEventRead)
+                           session: AsyncSession = Depends(get_async_session)) -> List[IEventResponse]:
+    events = await EventService.get_events_for_user_multi_ordered(skip=skip, limit=limit, order_by=order_by,
+                                                                  order=order, session=session, user_uuid=UUID(
+            "e762ffca-ceb1-4d46-94a6-ebf6ec366422"))
     return events
 
 
