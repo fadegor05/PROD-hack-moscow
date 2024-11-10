@@ -9,7 +9,7 @@ from app.schemas.user_schema import IUserRead
 
 
 class IBillCreate(BillBase):
-    pass
+    paid_by_uuid: None = None
 
 
 class IBillRead(BillBase):
