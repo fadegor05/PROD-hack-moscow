@@ -1,6 +1,6 @@
+from decimal import Decimal
 from typing import List, Optional
 from uuid import UUID
-from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -9,8 +9,11 @@ from app.schemas.bill_schema import IBillResponse
 from app.schemas.user_schema import IUserRead
 
 
-class IEventCreate(EventBase):
-    owner_uuid: None = None
+class IEventCreate(BaseModel):
+    name: str
+    description: str | None = None
+    created_at: str | None = NOne
+    until: str | None = None
 
 
 class IEventRead(BaseModel):
