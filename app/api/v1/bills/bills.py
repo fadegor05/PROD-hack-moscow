@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
+from app.core.deps import get_current_user
 from app.core.exception import MultiLangHTTPExceptions
 from app.database.database import get_async_session
 from app.schemas.bill_schema import IBillRead, IBillCreate, IBillResponse
@@ -15,10 +16,10 @@ bills_router = APIRouter(prefix="/bills", tags=["Bill"])
 
 
 @bills_router.get("/{bill_uuid}")
-async def get_bill_by_uuid(bill_uuid: UUID, session: AsyncSession = Depends(get_async_session)) -> IBillResponse:
-    # TODO: AUTH HERE AHH
+async def get_bill_by_uuid(bill_uuid: UUID, session: AsyncSession = Depends(get_async_session),
+                           current_user=Depends(get_current_user)) -> IBillResponse:
     bill = await BillService.get_bill(bill_uuid=bill_uuid, session=session,
-                                      user_uuid=UUID("e762ffca-ceb1-4d46-94a6-ebf6ec366422"))
+                                      user_uuid=current_user.uuid)
     if bill is None:
         raise MultiLangHTTPExceptions.BILL_NOT_FOUND.to_exception()
     return bill
@@ -29,16 +30,17 @@ async def get_multi_bills(skip: Annotated[Union[int, None], Query] = 0,
                           limit: Annotated[Union[int, None], Query] = 20,
                           order_by: Annotated[Union[str, None], Query] = "uuid",
                           order: Annotated[Union[IOrderEnum, None], Query] = IOrderEnum.ascendent,
-                          session: AsyncSession = Depends(get_async_session)):
-    # TODO: AUTH AHH
+                          session: AsyncSession = Depends(get_async_session),
+                          current_user=Depends(get_current_user)):
     bills = await BillService.get_bills_for_user_multi_ordered(skip=skip, limit=limit, order_by=order_by, order=order,
                                                                session=session,
-                                                               user_uuid=UUID("e762ffca-ceb1-4d46-94a6-ebf6ec366422"))
+                                                               user_uuid=current_user.uuid)
     return bills
 
 
 @bills_router.post("")
-async def post_bill(user_data: IBillCreate, session: AsyncSession = Depends(get_async_session)) -> IBillRead:
+async def post_bill(user_data: IBillCreate, session: AsyncSession = Depends(get_async_session),
+                    current_user=Depends(get_current_user)) -> IBillRead:
     try:
         bill = await crud.bill.create(obj_in=user_data, session=session)
     except HTTPException:
