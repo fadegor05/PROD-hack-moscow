@@ -41,8 +41,10 @@ async def get_multi_bills(skip: Annotated[Union[int, None], Query] = 0,
 @bills_router.post("")
 async def post_bill(user_data: IBillCreate, session: AsyncSession = Depends(get_async_session),
                     current_user=Depends(get_current_user)) -> IBillResponse:
+    data = user_data.model_dump()
+    data.update(owner_uuid=current_user.uuid)
     try:
-        bill = await crud.bill.create(obj_in=user_data, session=session)
+        bill = await crud.bill.create(obj_in=data, session=session)
     except HTTPException:
         raise MultiLangHTTPExceptions.BILL_ALREADY_EXISTS.to_exception()
     bill_new = await BillService.get_bill(bill_uuid=bill.uuid, session=session,
