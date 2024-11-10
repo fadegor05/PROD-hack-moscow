@@ -12,7 +12,7 @@ from app.schemas.user_schema import IUserRead
 class IEventCreate(BaseModel):
     name: str
     description: str | None = None
-    created_at: str | None = NOne
+    created_at: str | None = None
     until: str | None = None
 
 
