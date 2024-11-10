@@ -10,7 +10,7 @@ from app.schemas.user_schema import IUserRead
 
 
 class IEventCreate(EventBase):
-    pass
+    owner_uuid: None = None
 
 
 class IEventRead(BaseModel):
