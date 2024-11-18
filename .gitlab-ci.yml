@@ -1,0 +1,25 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+
+  script:
+    # Создаём директорию ~/backend на сервере и устанавливаем права
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "sudo mkdir -p ~/backend && sudo chown ${SSH_USER}:${SSH_USER} ~/backend"
+    # Копируем файлы, исключая папку .git
+    - tar --exclude='.git' -czf - . | ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "tar -xzf - -C ~/backend"
+    # Выполняем команды деплоя
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
+        cd ~/backend &&
+        sudo docker compose down &&
+        sudo docker compose up --build -d
+      "
+  only:
+    - master
